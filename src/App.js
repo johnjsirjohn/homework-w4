@@ -1,24 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
+import { connect } from 'react-redux'
+import addProduct from './actions/addProduct'
 
-class App extends Component {
-  render() {
-    return (
-      <div className='App'>
-        <p>Add Option Selector</p>
-        <form>
-          <select>
-            <option value=''>-- pick a model --</option>
-            {data.map(msgData => 
-              <option key={msgData.name} value={msgData.name}>{msgData.name} ({msgData.year})
-              </option>
-            )}
-          </select>
-        </form>
-      </div>
-    );
-  }
-}
 
 const data = [
   {
@@ -47,4 +31,47 @@ const data = [
   }
 ];
 
-export default App;
+class App extends Component {
+  state = {};
+
+  handleChange = event => {
+    const updatedValue = event.target.value
+    this.setState({ selectVal: updatedValue })
+    const datas = data.filter(prod => prod.name === updatedValue)
+  }
+
+  handleSubmit = event => {
+    this.props.dispatch({
+      type: 'ADD_PRODUCT',
+      payload: this.setState
+    })
+    event.preventDefault();
+    console.log('click')
+  };
+
+  render() {
+     return (
+      <div className='App'>
+        <p>Add Option Selector</p>
+        <form onSubmit={this.handleSubmit}>
+          <select onChange={this.handleChange} value={this.state.selectVal}>
+            <option value=''>-- pick a model --</option>
+            {data.map(msgData => 
+              <option key={msgData.name} value={msgData.name}>{msgData.name} ({msgData.year})
+              </option>
+            )}
+          </select>
+          <button type="submit" onClick={this.handleSubmit}>Add</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    data: state
+  }
+}
+
+export default connect(mapStateToProps)(App)
